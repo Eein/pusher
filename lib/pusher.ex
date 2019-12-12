@@ -1,9 +1,22 @@
 defmodule Pusher do
   alias Pusher.HttpClient
+  @headers %{"Content-type" => "application/json"}
 
   @doc """
   Trigger a simple `event` on `channels` sending some `data`
   """
+  def trigger_batch(client, chunk) do
+    body = chunk |> Jason.encode!
+
+    headers = %{"Content-type" => "application/json"}
+
+    case HttpClient.post("/apps/#{client.app_id}/batch_events", body, headers, client: client) do
+      {:ok, %HTTPoison.Response{status_code: 200}} -> :ok
+      {:ok, response} -> {:error, response}
+      {:error, reason} -> {:error, reason}
+    end
+  end
+
   def trigger(client, event, data, channels, socket_id \\ nil) do
     data = encoded_data(data)
 
