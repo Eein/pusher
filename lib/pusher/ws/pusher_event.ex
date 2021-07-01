@@ -56,7 +56,7 @@ defmodule Pusher.WS.PusherEvent do
   end
 
   defp hmac256(app_secret, to_sign) do
-    :crypto.hmac(:sha256, app_secret, to_sign)
+    :crypto.mac(:hmac, :sha256, app_secret, to_sign)
     |> hexlify
     |> :string.to_lower()
     |> List.to_string()
